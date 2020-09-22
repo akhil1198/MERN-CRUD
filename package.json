@@ -1,0 +1,11 @@
+{
+  "name": "mobtask",
+  "version": "1.0.0",
+  "description": "A MERN stack crud project implemented for the mobiotics interview task",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
