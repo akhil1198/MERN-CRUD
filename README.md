@@ -3,7 +3,13 @@ A MERN stack implementation of basic crud functionalities for a user to create/r
 
 ## Available Scripts
 
-In the project directory, you can cd into the server folder and run:
+In the project directory. cd into both the server and client folder and run:
+
+### `npm install` 
+
+Once the npm install command completes on both client and server folder, the project is installed on the system.
+
+Next, In the project directory, you can cd into the server folder and run:
 
 ### `npm run dev` 
 
