@@ -2,6 +2,9 @@ const express = require("express");
 var app = express();
 const http = require("http").createServer(app);
 
+const connection = require('./config/connection')
+
+connection();
 
 // //visitor api
 
@@ -20,6 +23,7 @@ const http = require("http").createServer(app);
 // app.use("/totalvisitor", adminController.totalvisitors); //api to fetch total visitor count
 
 // app.use("/updateprofile", adminController.updateprofile); //api to update visitor invformation
+
 
 app.use("/", (req, res) => {
     res.send("Hello World form NodeJS express.");
