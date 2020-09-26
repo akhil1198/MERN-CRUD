@@ -6,9 +6,20 @@ const { check, validationResult } = require('express-validator')
 const userSchema = require('../models/User')
 const config = require('config');
 const { response } = require('express');
-// router.get('/', (req, res) => {
-//     res.send("user endpoint")
-// })
+const auth = require('../middleware/MiddlewareAuth')
+
+router.get(
+    '/', 
+    auth,
+    async (req, res) => {
+        try {
+            const user = await userSchema.findById(req.user.id).select('-password')
+            res.json(user)
+        } catch (error) {
+            console.log(error)
+        }
+    
+})
 
 router.post(
     '/register',

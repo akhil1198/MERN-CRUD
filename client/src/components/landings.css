@@ -1,0 +1,28 @@
+.card{
+    margin-top: 5%;
+    justify-content: center;
+    border-radius: 35%;
+    margin: "25%";
+    animation-duration: 1.9s;
+}
+
+#href {
+    text-decoration: none;
+}
+#title {
+    font-size: 55px;
+    width: "20%";
+    margin: "25%"
+
+}
+
+#text {
+    font-size: 35px;
+    width: "20%";
+    margin: "25%"
+
+}
+
+#textfield{
+    margin-left: 10%;
+}

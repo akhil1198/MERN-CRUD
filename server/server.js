@@ -1,5 +1,6 @@
 const express = require("express");
 var app = express();
+const cors = require("cors")
 const http = require("http").createServer(app);
 
 const connection = require('./config/connection')
@@ -9,6 +10,13 @@ const users = require('./API/Users')
 connection();
 
 app.use(express.json({ extended: false })); 
+
+app.use(
+    cors({
+        origin: "http://localhost:3000",
+        credentials: true
+    })
+)
 
 //visitor api
 
