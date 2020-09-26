@@ -3,15 +3,15 @@ var app = express();
 const cors = require("cors")
 const http = require("http").createServer(app);
 
+//local imports
 const connection = require('./config/connection')
-
 const users = require('./API/Users')
 
-connection();
+connection();           //calling the connection function here to connect to the mongoDB 
 
-app.use(express.json({ extended: false })); 
+app.use(express.json({ extended: false }));
 
-app.use(
+app.use(        //cors to enable cross origin sharing of data from front end to backend 
     cors({
         origin: "http://localhost:3000",
         credentials: true
@@ -20,28 +20,13 @@ app.use(
 
 //visitor api
 
-app.use("/api/users", users); //api to 
+app.use("/api/users", users); //api to fetch the user details with token 
 
-app.use("/api/users/register", users); //api to 
+app.use("/api/users/register", users); //api to register users 
 
-app.use("/api/users/login", users); //api to 
+app.use("/api/users/login", users); //api to login users
 
-// app.use("/api/users/signout", users); //api to 
-
-// app.use("/createvisitor", adminController.createvisitor); //create visitor table and fetching
-
-// app.use("/block", adminController.blocklist); //api to blocklist visitor
-
-// app.use("/unblock", adminController.unblock); //api to unblock visitor
-
-// app.use("/hello", adminController.hello); //api to fetch a specific visitor details
-
-// app.use("/previsits", adminController.previsits); //fetching visitors previous data
-
-// app.use("/totalvisitor", adminController.totalvisitors); //api to fetch total visitor count
-
-// app.use("/updateprofile", adminController.updateprofile); //api to update visitor invformation
-
+// app.use("/api/users/signout", users); //api to signout users
 
 app.use("/", (req, res) => {
     res.send("Hello World form NodeJS express.");

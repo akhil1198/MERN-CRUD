@@ -4,7 +4,7 @@ const config = require('config');
 
 const connection = async () => {
     try {
-        await mongoose.connect(
+        await mongoose.connect(                     //connection to mongoDB with the mongoURI fetched from the config file
             config.get('mongoURI'),
             {
                 useCreateIndex: true,

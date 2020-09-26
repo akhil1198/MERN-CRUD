@@ -1,20 +1,25 @@
-import React, {useState} from 'react';
+//package imports
+import React, { useState } from 'react';
+import axios from 'axios'
+
+//material-ui imports
 import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import './landings.css'
 import Grid from '@material-ui/core/Grid';
-import axios from 'axios'
-import { Link } from 'react-router-dom';
+
+
+//local imports
+import './landings.css'
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  },
+    root: {
+        flexGrow: 1,
+    },
+    paper: {
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    },
 }));
 
 const SignUp = () => {
@@ -27,12 +32,12 @@ const SignUp = () => {
         password2: '',
         loggedin: false,
         errors: {},
-    });
+    });             //using formdata for recording values from the form
 
-    const { name, phone, email, password, password2, errors } = formData;
+    const { name, phone, email, password, password2, errors } = formData;           //destructuring the formdata for ease of acess
 
     const onChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmitRegister = (e) => {
         e.preventDefault();
@@ -55,24 +60,24 @@ const SignUp = () => {
                     alert(err)
                 })
         } catch (error) {
-          // alert(error);
+            // alert(error);
         }
     }
 
 
-    return ( 
+    return (
         <div>
-            <Typography variant="h1" style={{ margin: "2%"}}>
-              User Management System
+            <Typography variant="h1" style={{ margin: "2%" }}>
+                User Management System
             </Typography>
             <Grid container spacing={3}>
                 <Grid item xs={3}>
-                    
+
                 </Grid>
                 <Grid item xs={6}>
-                    
+
                     <div className="card w3-animate-bottom">
-                        <Paper elevation={3} style={{ padding: "3%"}}>
+                        <Paper elevation={3} style={{ padding: "3%" }}>
                             <Typography id="title">Welcome!</Typography>
                             <Typography id="text" >Register</Typography>
                             <form onSubmit={onSubmitRegister}>
@@ -86,7 +91,7 @@ const SignUp = () => {
                                         name='name'
                                         onChange={(e) => onChange(e)}
                                         variant='outlined'
-                                        style={{ margin: "2%", width: "50%"}}
+                                        style={{ margin: "2%", width: "50%" }}
                                     />
                                 </div>
                                 <div>
@@ -98,16 +103,16 @@ const SignUp = () => {
                                         name='phone'
                                         onChange={(e) => onChange(e)}
                                         variant='outlined'
-                                        style={{ margin: "2%", width: "50%"}}
+                                        style={{ margin: "2%", width: "50%" }}
                                         error={
                                             !/^[0-9]+$/.test(phone) && phone !== ""
                                         }
                                         helperText={
                                             !/^[0-9]+$/.test(phone) && phone !== ""
-                                              ? "Invalid contact number"
-                                              : phone.length !== 10 && phone !== ""
-                                              ? "Should consist of 10 digits"
-                                              : ""
+                                                ? "Invalid contact number"
+                                                : phone.length !== 10 && phone !== ""
+                                                    ? "Should consist of 10 digits"
+                                                    : ""
                                         }
                                     />
                                 </div>
@@ -120,18 +125,18 @@ const SignUp = () => {
                                         name='email'
                                         onChange={(e) => onChange(e)}
                                         variant='outlined'
-                                        style={{ margin: "2%", width: "50%"}}
+                                        style={{ margin: "2%", width: "50%" }}
                                         error={
                                             !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                                            email
+                                                email
                                             ) && email !== ""
                                         }
                                         helperText={
                                             !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                                            email
+                                                email
                                             ) && email !== ""
-                                            ? "Invalid email"
-                                            : ""
+                                                ? "Invalid email"
+                                                : ""
                                         }
                                     />
                                 </div>
@@ -144,7 +149,7 @@ const SignUp = () => {
                                         name='password'
                                         onChange={(e) => onChange(e)}
                                         variant='outlined'
-                                        style={{ margin: "2%", width: "50%"}}
+                                        style={{ margin: "2%", width: "50%" }}
                                     />
                                 </div>
                                 <div>
@@ -159,13 +164,13 @@ const SignUp = () => {
                                         id='password2'
                                         autoComplete='confirm-password'
                                         value={password2}
-                                        style={{ margin: "2%", width: "50%"}}
+                                        style={{ margin: "2%", width: "50%" }}
                                         onChange={(e) => onChange(e)}
                                         error={password2 !== password && password2 !== ''}
                                         helperText={
-                                          password2 !== password && password2 !== ''
-                                            ? 'Passwords do not match'
-                                            : ''
+                                            password2 !== password && password2 !== ''
+                                                ? 'Passwords do not match'
+                                                : ''
                                         }
                                     />
                                 </div>
@@ -173,12 +178,12 @@ const SignUp = () => {
                                     variant='contained'
                                     color='primary'
                                     type='submit'
-                                    style={{ marginTop: "2%"}}
+                                    style={{ marginTop: "2%" }}
                                 >
                                     <Box fontSize={16}>Sign Up</Box>
                                 </Button>
                             </form>
-                            <Typography style={{ margin: "3%"}}>
+                            <Typography style={{ margin: "3%" }}>
                                 <Box>
                                     Already have an account?{' '}
                                     <a href='/' id="href">
@@ -191,13 +196,13 @@ const SignUp = () => {
                     </div>
                 </Grid>
                 <Grid item xs={3}>
-                    
+
                 </Grid>
             </Grid>
-            
-            
+
+
         </div>
-     );
+    );
 }
- 
+
 export default SignUp;
