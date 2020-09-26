@@ -7,17 +7,27 @@ import History from 'history'
 
 //local imports
 import Store from './store'
-import logo from './logo.svg';
 import './App.css';
 import Home from './components/Home';
 import Landing from './components/Landing'
 import ProtectedRoute from './ProtectedRoute'
 import SignUp from './components/Signup';
+import { loadUser } from './actions/Auth';
+import {SetToken} from './auth/SetToken';
 
 export const AuthContext = React.createContext();
 const history = createBrowserHistory();
 
+if(localStorage.getItem('token')){
+  SetToken(localStorage.getItem('token'))
+}
+
 function App() {
+
+  useEffect(() => {
+    Store.dispatch(loadUser());
+  }, [])
+
   return (
     <div className="App" style={{ backgroundColor: "#ead8bb" }}>
       <Provider store={Store}>        {/* provider with store for redux being sent to every component using context api */}
