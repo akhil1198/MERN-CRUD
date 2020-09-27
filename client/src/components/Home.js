@@ -19,6 +19,7 @@ import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
 import Edituserdetails from "./Edituserdetails";
 import { Typography, Paper } from "@material-ui/core";
+import { Redirect } from "react-router-dom";
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -82,6 +83,22 @@ export default function Home(props) {
     const [section, setSection] = useState()
     const [hashtag, setHashtag] = useState()
 
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            console.log("here")
+            console.log(localStorage.getItem('token'))
+
+        } else {
+            console.log("not here")
+            window.location.href = "/"
+        }
+    }, [])
+
+    const logout = () => {
+        localStorage.removeItem('token')
+        window.location.href = "/"
+    }
+
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -99,12 +116,14 @@ export default function Home(props) {
         setPage(0);
     };
 
+
+
     return (
         <React.Fragment>
             <div>
                 <Typography variant="h1" style={{ margin: "2%" }}>
                     User Management System
-            </Typography>
+                </Typography>
                 <Grid container spacing={3}>
                     <Grid item xs={3}>
 
@@ -193,7 +212,11 @@ export default function Home(props) {
                                         </TableRow>
                                     </TableFooter>
                                 </Table>
+
                             </Paper>
+                            <Button onClick={logout}>
+                                Logout
+                            </Button>
                         </div>
                     </Grid>
                     <Grid item xs={3}>

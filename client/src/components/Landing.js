@@ -1,7 +1,7 @@
 //package imports
 import React, { useState } from 'react';
 import axios from 'axios'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 //material-ui imports
 import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Landing = () => {
   const classes = useStyles();
+  const [token, setToken] = useState()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,7 +52,10 @@ const Landing = () => {
       axios
         .post(url, data)
         .then(response => {
-          console.log(response)
+          console.log(response.data.token)
+          setToken(response.data.token)
+          localStorage.setItem('token', response.data.token)
+          window.location.href = "/home"
         })
         .catch(err => {
           alert(err)
@@ -59,6 +63,12 @@ const Landing = () => {
     } catch (error) {
       // alert(error);
     }
+  }
+
+  if (localStorage.getItem('token')) {
+    console.log(localStorage.getItem('token'))
+  } else {
+    console.log("Login to redirect")
   }
 
 

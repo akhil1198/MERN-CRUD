@@ -1,15 +1,11 @@
 //package imports
 import React, { useState } from 'react';
 import axios from 'axios'
-import { connect } from 'react-redux'
 
 //material-ui imports
 import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
-//actions
-import {registerUser} from '../actions/Auth'
 
 //local imports
 import './landings.css'
@@ -25,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignUp = ({ isLoggedin, registerUser }) => {
+export const SignUp = () => {
     const classes = useStyles();
     const [formData, setFormData] = useState({
         name: '',
@@ -45,28 +41,26 @@ const SignUp = ({ isLoggedin, registerUser }) => {
     const onSubmitRegister = (e) => {
         e.preventDefault();
 
-        if (name === "" && phone === "") return alert("Empty values");
-        else registerUser(name, phone, email, password);
-
-        // let data = {
-        //     name: name,
-        //     phone: phone,
-        //     email: email,
-        //     password: password
-        // };
-        // const url = "http://localhost:5000/api/users/register"
-        // console.log(data);
-        // try {
-        //     axios
-        //         .post(url, data)
-        //         .then(response => {
-        //             console.log(response)
-        //         })
-        //         .catch(err => {
-        //             alert(err)
-        //         })
-        // } catch (error) {
-        //     // alert(error);
+        let data = {
+            name: name,
+            phone: phone,
+            email: email,
+            password: password
+        };
+        const url = "http://localhost:5000/api/users/register"
+        console.log(data);
+        try {
+            axios
+                .post(url, data)
+                .then(response => {
+                    console.log(response)
+                })
+                .catch(err => {
+                    alert(err)
+                })
+        } catch (error) {
+            alert(error);
+        }
     }
 
 
@@ -210,9 +204,3 @@ const SignUp = ({ isLoggedin, registerUser }) => {
         </div>
     );
 }
-
-const mapStateToProps = state => ({
-    isLoggedin: state.isLoggedin
-})
-
-export default connect(mapStateToProps, { registerUser })(SignUp);
