@@ -1,15 +1,11 @@
 //package imports
 import React, { useState } from 'react';
 import axios from 'axios'
-import { connect } from 'react-redux'
 
 //material-ui imports
-import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Paper, TextField, Typography, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
-//actions
-import {registerUser} from '../actions/Auth'
 
 //local imports
 import './landings.css'
@@ -25,8 +21,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const SignUp = ({ isLoggedin, registerUser }) => {
+export const SignUp = () => {
     const classes = useStyles();
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -44,31 +41,40 @@ const SignUp = ({ isLoggedin, registerUser }) => {
 
     const onSubmitRegister = (e) => {
         e.preventDefault();
-
-        if (name === "" && phone === "") return alert("Empty values");
-        else registerUser(name, phone, email, password);
-
-        // let data = {
-        //     name: name,
-        //     phone: phone,
-        //     email: email,
-        //     password: password
-        // };
-        // const url = "http://localhost:5000/api/users/register"
-        // console.log(data);
-        // try {
-        //     axios
-        //         .post(url, data)
-        //         .then(response => {
-        //             console.log(response)
-        //         })
-        //         .catch(err => {
-        //             alert(err)
-        //         })
-        // } catch (error) {
-        //     // alert(error);
+        setLoading(true)
+        let data = {
+            name: name,
+            phone: phone,
+            email: email,
+            password: password
+        };
+        const url = "http://localhost:5000/api/users/register"
+        console.log(data);
+        try {
+            axios
+                .post(url, data)
+                .then(response => {
+                    console.log(response)
+                    console.log(response.data.token)
+                    setLoading(false)
+                    localStorage.setItem('token', response.data.token)
+                    window.location.href = "/home"
+                })
+                .catch(err => {
+                    alert(err)
+                })
+        } catch (error) {
+            alert(error);
+        }
     }
 
+    if (loading) {
+        return (
+            <div style={{ marginTop: "25%" }}>
+                <CircularProgress />
+            </div>
+        )
+    }
 
 
     return (
@@ -191,9 +197,10 @@ const SignUp = ({ isLoggedin, registerUser }) => {
                             </form>
                             <Typography style={{ margin: "3%" }}>
                                 <Box>
-                                    Already have an account?{' '}
-                                    <a href='/' id="href">
-                                        Click here
+                                    Don't have an account?{' '}
+                                    Click{' '}
+                                    <a href='/' id="href" style={{ color: "#d97820" }}>
+                                        here
                                     </a>{' '}
                                     to Log-In{' '}
                                 </Box>
@@ -210,9 +217,3 @@ const SignUp = ({ isLoggedin, registerUser }) => {
         </div>
     );
 }
-
-const mapStateToProps = state => ({
-    isLoggedin: state.isLoggedin
-})
-
-export default connect(mapStateToProps, { registerUser })(SignUp);

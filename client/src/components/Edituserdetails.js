@@ -1,234 +1,322 @@
-import React, { useState, useContext, useEffect } from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import VideocamIcon from "@material-ui/icons/Videocam";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
-import Chip from "@material-ui/core/Chip";
-import Snackbar from "@material-ui/core/Snackbar";
+import React, { useState, useEffect, useContext } from "react";
+import { Redirect } from "react-router-dom";
+
+//package imports 
 import axios from "axios";
+import Moment from "moment";
+
+//local imports
 import Home from "./Home";
 
-const colorHashtags = ["entry", "exit", "canteen", "class"];
+//material-ui imports
+import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableFooter from "@material-ui/core/TableFooter";
+import TablePagination from "@material-ui/core/TablePagination";
+import IconButton from "@material-ui/core/IconButton";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
+import { Typography, Paper, TextField } from "@material-ui/core";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-function Alert(props) {
-}
 
-const useStyles = makeStyles(theme => ({
-  paper: {
+const StyledTableCell = withStyles((theme) => ({
+  head: {
+    color: theme.palette.common.black,
+    fontSize: 16,
+  },
+  body: {
+    fontSize: 12,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    "&:nth-of-type(odd)": {
+      backgroundColor: theme.palette.background.default,
+    },
+  },
+}))(TableRow);
+
+const useStyles = makeStyles((theme) => ({
+  Container: {
+    padding: theme.spacing(5),
+  },
+  tableContainer: {
+    maxHeight: 500,
+    maxWidth: 200,
+  },
+  AppBarDiv: {
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
+    justifyContent: "spaceBetween",
   },
-  avatar: {
-    margin: theme.spacing(1),
+  root: {
+    flexGrow: 1,
   },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+  menuButton: {
+    marginRight: theme.spacing(2),
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2)
-  }
+  title: {
+    flexGrow: 1,
+  },
+}));
+
+const useStyles1 = makeStyles((theme) => ({
+  root: {
+    // flexShrink: 0,
+    display: "flex",
+    width: 270,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 }));
 
 export default function Edituserdetails(props) {
-  const classes = useStyles();
-  const [ipcam, setIpcam] = useState([])
-  const [docid, setDocid] = useState()
-  const [editID, setEditID] = useState()
-  // console.log(docID)
-
-  useEffect(() => {
-    
-  }, [])
-
-  const [ipAddress, setIPAddress] = useState(props.data);
-  const [classOfPlaceInstalled, setClassOfPlaceInstalled] = useState(props.place);
-  const [sectionOfPlaceInstalled, setSectionOfPlaceInstalled] = useState(props.section);
-  const [hashtag, setHashtag] = useState(props.hashtag);
-  const [open, setOpen] = React.useState(false);
-  const [severity, setSeverity] = React.useState("success");
-  const [content, setContent] = React.useState(
-    "IP Camera successfully registered"
-  );
   const [goBack, setGoback] = useState(false)
+  const [openRemove, setOpenRemove] = useState(false)
+  const [openUpdate, setOpenUpdate] = useState(false)
+  const token = localStorage.getItem('token')
+  const classes = useStyles();
+  const [formData, setFormData] = useState({
+    name: props.name,
+    phone: props.phone,
+    email: props.email,
+    errors: {},
+  });             //using formdata for recording values from the form
+
+  const { name, phone, email, errors } = formData;           //destructuring the formdata for ease of acess
+
+  console.log(formData)
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   if (goBack === true) {
     return <Home />
   }
 
-  const handleFormSubmit = e => {
-    e.preventDefault();
-    if (ipAddress === "" || hashtag === "") {
-      setSeverity("error");
-      setContent("Please fill all the details!");
-      setOpen(true);
-    } else {
-
-      
-    }
-  };
-
-  const handleRemove = e => {
-    e.preventDefault();
-    
-
-  }
-
-  console.log(props.data)
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpen(false);
+    setOpenRemove(false);
+    setOpenUpdate(false)
   };
 
+
+  const handleRemove = e => {
+    e.preventDefault();
+    //remove information based on their ids
+    let data = {
+      id: props.id
+    };
+    const url = "http://localhost:5000/api/users/remove"
+    console.log(data);
+    try {
+      axios
+        .post(url, data, {
+          headers: {
+            'x-auth-token': token,
+          }
+        })
+        .then(response => {
+          console.log(response)
+          console.log("removed")
+          setOpenRemove(true)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    //update users information based on their ids
+    let data = {
+      id: props.id,
+      name: name,
+      phone: phone,
+      email: email,
+    };
+    const url = "http://localhost:5000/api/users/update"
+    console.log(data);
+    try {
+      axios
+        .post(url, data, {
+          headers: {
+            'x-auth-token': token,
+          }
+        })
+        .then(response => {
+          console.log(response)
+          console.log("updated")
+          setOpenUpdate(true)
+        })
+        .catch(err => {
+          alert(err)
+        })
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
   return (
-    <div className='w3-animate-bottom'>
-      <Grid container spacing={12}>
-        <Grid item style={{ marginLeft: "5%" }}>
-          <div className={classes.paper}>
-            <Typography component="h1" variant="h5">
-              Edit IPcamera details here
-            </Typography>
-            <form className={classes.form} noValidate onSubmit={handleFormSubmit}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="ipAddress"
-                label="IP Address"
-                name="ipAddress"
-                autoComplete="ipAddress"
-                autoFocus
-                value={ipAddress}
-                style={{ marginBottom: "10px" }}
-                onChange={e => setIPAddress(e.target.value)}
-              />
-              <Grid container spacing={5}>
-                <Grid item xs={6}>
-                  <FormControl>
-                    <InputLabel>Class</InputLabel>
-                    <Select
-                      labelId="class"
-                      id="class"
-                      onChange={e => setClassOfPlaceInstalled(e.target.value)}
-                      value={classOfPlaceInstalled}
-                      defaultValue={sectionOfPlaceInstalled}
-                    >
-                      <option value={10}>X</option>
-                      <option value={11}>XI</option>
-                      <option value={12}>XII</option>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={6}>
-                  <FormControl>
-                    <InputLabel>Section</InputLabel>
-                    <Select
-                      labelId="section"
-                      id="section"
-                      onChange={e => setSectionOfPlaceInstalled(e.target.value)}
-                      value={sectionOfPlaceInstalled}
-                      defaultValue={sectionOfPlaceInstalled}
-                    >
-                      <option value={"A"}>A</option>
-                      <option value={"B"}>B</option>
-                      <option value={"C"}>C</option>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
+    <React.Fragment>
+      <div>
+        <Typography variant="h1" style={{ margin: "2%" }}>
+          User Management System
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={3}>
+
+          </Grid>
+          <Grid item xs={6}>
+
+            <div className="card w3-animate-bottom">
+              <Paper elevation={3} style={{ padding: "3%" }}>
+                <Typography variant="h3" style={{ margin: "2%" }}>
+                  Edit user details here
+                </Typography>
+                <form className={classes.form} noValidate >
                   <div>
-                    Suggested Hashtags:
-                {colorHashtags.map(hashtag => (
-                    <Chip
-                      label={`#${hashtag}`}
-                      style={{
-                        margin: "3px",
-                        color: hashtag === "yellow" ? "gold" : hashtag
-                      }}
-                      variant="outlined"
-                      onClick={() => {
-                        setHashtag(`#${hashtag}`);
-                      }}
+                    <TextField
+                      id='name'
+                      autoFocus
+                      label="Enter Name"
+                      value={name}
+                      type='name'
+                      name='name'
+                      onChange={(e) => onChange(e)}
+                      variant='outlined'
+                      style={{ margin: "2%", width: "50%" }}
                     />
-                  ))}
                   </div>
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    variant="outlined"
-                    required
-                    id="Hashtag"
-                    label="Insert # Hashtag"
-                    fullWidth
-                    name="Hashtag"
-                    autoComplete="Hashtag"
-                    onChange={e => setHashtag(e.target.value)}
-                    value={hashtag}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
-                Update Configurations
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={handleRemove}
-              >
-                Delete  Configurations
-              </Button>
-              <Button
-                type="submit"
-                fullWidth
-                onClick={() => {
-                  setGoback(true)
-                }}
-              >
-                Back
-              </Button>
-            </form>
-          </div>
+                  <div>
+                    <TextField
+                      id='phone'
+                      label="Enter Phone"
+                      value={phone}
+                      type='phone'
+                      name='phone'
+                      onChange={(e) => onChange(e)}
+                      variant='outlined'
+                      style={{ margin: "2%", width: "50%" }}
+                      error={
+                        !/^[0-9]+$/.test(phone) && phone !== ""
+                      }
+                      helperText={
+                        !/^[0-9]+$/.test(phone) && phone !== ""
+                          ? "Invalid contact number"
+                          : phone.length !== 10 && phone !== ""
+                            ? "Should consist of 10 digits"
+                            : ""
+                      }
+                    />
+                  </div>
+                  <div>
+                    <TextField
+                      id='email'
+                      label="Enter Email"
+                      value={email}
+                      type='email'
+                      name='email'
+                      onChange={(e) => onChange(e)}
+                      variant='outlined'
+                      style={{ margin: "2%", width: "50%" }}
+                      error={
+                        !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                          email
+                        ) && email !== ""
+                      }
+                      helperText={
+                        !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                          email
+                        ) && email !== ""
+                          ? "Invalid email"
+                          : ""
+                      }
+                    />
+                  </div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    style={{ marginTop: "3%" }}
+                    onClick={handleUpdate}
+                  >
+                    Update Details
+                  </Button>
+                  <br />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleRemove}
+                    style={{ marginTop: "3%" }}
+                  >
+                    Delete Details
+                  </Button>
+                  <br />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      setGoback(true)
+                    }}
+                    style={{ marginTop: "3%" }}
+                  >
+                    Back
+                  </Button>
+
+                </form>
+
+              </Paper>
+            </div>
+          </Grid>
+          <Grid item xs={3}>
+
+          </Grid>
         </Grid>
-
-
-        {/* <Grid item md={6} style={{ marginLeft: "7%" }}>
-          <div className={classes.paper}>
-            <Typography component="h1" variant="h5">
-              Current IP Camera Configurations
-          </Typography>
-            <IPtable settings={props.settings} />
-          </div>
-
-        </Grid> */}
-      </Grid>
-
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={severity}>
-          {content}
-        </Alert>
-      </Snackbar>
-    </div>
-
+        <Dialog
+          open={openUpdate}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              UPDATED!
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          open={openRemove}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              DELETED!
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </React.Fragment>
   );
 }

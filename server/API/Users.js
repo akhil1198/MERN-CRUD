@@ -25,6 +25,21 @@ router.get(
     }
 )
 
+router.get(
+    '/getall',
+    auth,                                       //auth is used to verify the logged in user or if the token for the logged in user is still alive and then pushes to the next function
+    async (req, res) => {                       //which is basically to this step where the logged in users information is retrieved
+        try {
+            const user = await userSchema.find().select('-password')         //using -password will remove the hashed password from the response 
+            res.json(user)
+        } catch (error) {
+            console.log(error)
+            res.status(500).json(error)
+        }
+
+    }
+)
+
 router.post(
     '/register',
     [   //validation of data being recieved
@@ -37,7 +52,6 @@ router.post(
         //processing of data being sent to the endpoint
         try {
             let { name, phone, email, password } = req.body;
-            // console.log(req.body)
 
             let user = await userSchema.findOne({
                 email: email
@@ -75,11 +89,6 @@ router.post(
                         config.get('jwtSecret'),
                         (err, token) => {
                             res.json({ "token": token });
-
-                            // if(error){
-                            //     throw err
-                            // } else {
-                            // }
                         }
                     )
 
@@ -142,6 +151,94 @@ router.post(
                 .catch(err => {
                     console.log(err)
                 })
+
+            const error = validationResult(req)
+            if (!error.isEmpty()) {    //checks if any error in the validation process for the data recieved in the request
+                return res.status(401).json({ errors: error.array() })
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ msg: "Server error!" })
+        }
+    }
+)
+
+router.post(
+    '/update',
+    [   //validation of data being recieved
+        check('name', 'Name is required').isString(),
+        check('phone', 'Phone is required').isMobilePhone(),
+        check('email', 'Email is required').isEmail(),
+    ],
+    async (req, res) => {
+        //processing of data being sent to the endpoint
+        try {
+            let { id, name, phone, email } = req.body;
+            console.log(req.body)
+
+            let user = await userSchema.findOne({
+                _id: id
+            })
+
+            if (!user) {                   
+                return res.status(401).json({
+                    msg: "No user found!"
+                })
+            } else {
+                user.name = name;
+                user.email = email;
+                user.phone = phone;
+
+                await user
+                    .save()                         //updating the user data here 
+                    .then(response => {
+                        console.log("User updated!")
+                        console.log(response)
+                        res.status(200).send({ msg: "updated!" })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
+            }
+
+            const error = validationResult(req)
+            if (!error.isEmpty()) {    
+                return res.status(401).json({ errors: error.array() })
+            }
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ msg: "Server error!" })
+        }
+    }
+)
+
+router.post(
+    '/remove',
+    [   //validation of data being recieved
+        check('name', 'Name is required').isString(),
+        check('phone', 'Phone is required').isMobilePhone(),
+        check('email', 'Email is required').isEmail(),
+        check('password', 'Password is required').not().isEmpty()
+    ],
+    async (req, res) => {
+        //processing of data being sent to the endpoint
+        try {
+            let { id } = req.body;
+            console.log(req.body)
+
+            let user = await userSchema.findByIdAndRemove({                 //removing the user by finding the user with the id being sent
+                _id: id
+            })
+                .then(response => {
+                    console.log("user deleted!")
+                    console.log(response)
+                    res.status(200).send({ msg: "deleted!" })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
 
             const error = validationResult(req)
             if (!error.isEmpty()) {    //checks if any error in the validation process for the data recieved in the request
