@@ -4,7 +4,7 @@ import axios from 'axios'
 import { Link, Redirect } from 'react-router-dom';
 
 //material-ui imports
-import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Paper, TextField, Typography, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Landing = () => {
   const classes = useStyles();
-  const [token, setToken] = useState()
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,12 +36,20 @@ const Landing = () => {
 
   const { name, email, password, errors } = formData;     //destructuring the formData here for easy access
 
+  if (loading) {
+    return (
+      <div style={{ marginTop: "25%" }}>
+        <CircularProgress />
+      </div>
+    )
+  }
+
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const onSubmitLogin = (e) => {
     e.preventDefault();
-
+    setLoading(true)
     let data = {
       email: email,
       password: password
@@ -53,17 +61,20 @@ const Landing = () => {
         .post(url, data)
         .then(response => {
           console.log(response.data.token)
-          setToken(response.data.token)
+          setLoading(false)
           localStorage.setItem('token', response.data.token)
           window.location.href = "/home"
         })
         .catch(err => {
+          alert("please check your credentials")
           alert(err)
         })
     } catch (error) {
       // alert(error);
     }
   }
+
+
 
   if (localStorage.getItem('token')) {
     console.log(localStorage.getItem('token'))
@@ -137,10 +148,11 @@ const Landing = () => {
               <Typography style={{ margin: "3%" }}>
                 <Box>
                   Don't have an account?{' '}
-                  <a href='/signup' id="href">
-                    Click here
-                                </a>{' '}
-                                to Sign Up{' '}
+                  Click{' '}
+                  <a href='/signup' id="href" style={{ color: "#d97820" }}>
+                    here
+                  </a>{' '}
+                  to Sign Up{' '}
                 </Box>
               </Typography>
             </Paper>

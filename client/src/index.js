@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
-const theme = createMuiTheme({
+const theme = createMuiTheme({                          //creating global UI settings here
     palette: {
         primary: {
             main: '#d97820',
@@ -22,7 +22,7 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
     <React.StrictMode>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>                  
             <App />
         </ThemeProvider>
     </React.StrictMode>,

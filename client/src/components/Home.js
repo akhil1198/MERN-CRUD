@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Redirect } from "react-router-dom";
+
+//local imports
+import Edituserdetails from "./Edituserdetails";
+
+//package imports
+import Moment from "moment";
 import axios from "axios";
+
+//material-ui imports
 import { withStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -8,7 +17,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import Moment from "moment";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableFooter from "@material-ui/core/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination";
@@ -17,9 +25,7 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import Edituserdetails from "./Edituserdetails";
-import { Typography, Paper } from "@material-ui/core";
-import { Redirect } from "react-router-dom";
+import { Typography, Paper, CircularProgress } from "@material-ui/core";
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -73,37 +79,64 @@ const useStyles1 = makeStyles((theme) => ({
 }));
 
 export default function Home(props) {
-    // const { PointOfCamera, Hashtag } = props;
     const [data, setData] = useState([])
     const [editData, setEditdata] = useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [page, setPage] = React.useState(0);
-    const [ipData, setIPdata] = useState()
-    const [place, setPlace] = useState()
-    const [section, setSection] = useState()
-    const [hashtag, setHashtag] = useState()
+    const [id, setID] = useState()
+    const [name, setName] = useState()
+    const [email, setEmail] = useState()
+    const [phone, setPhone] = useState()
+    const [loading, setLoading] = useState(false)
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
+
         if (localStorage.getItem('token')) {
             console.log("here")
             console.log(localStorage.getItem('token'))
+
 
         } else {
             console.log("not here")
             window.location.href = "/"
         }
+        const url = "http://localhost:5000/api/users/getall"                    //getting all the user information here
+
+        axios
+            .get(url, {
+                headers: {                                                      //settting the headers here and sending the token for auth
+                    'x-auth-token': token,
+                }
+            })
+            .then(response => {
+                console.log(response.data)
+                setData(response.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }, [])
 
-    const logout = () => {
+    const logout = () => {                                                      //logout function
+        setLoading(true)
         localStorage.removeItem('token')
         window.location.href = "/"
+    }
+
+    if (loading) {
+        return (
+            <div style={{ marginTop: "25%" }}>
+                <CircularProgress />
+            </div>
+        )
     }
 
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
     if (editData) {
-        return <Edituserdetails data={ipData} section={section} place={place} hashtag={hashtag} edit={editData} settings={props.settings} />
+        return <Edituserdetails id={id} name={name} phone={phone} email={email} />
 
     }
 
@@ -158,15 +191,10 @@ export default function Home(props) {
                                             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                             : data
                                         ).map((row) => (
-                                            <StyledTableRow key={row.ID}>
-                                                <StyledTableCell align="left">{row.IPAddress}</StyledTableCell>
-                                                <StyledTableCell align="left">
-                                                    {row.class}, {row.section}
-                                                </StyledTableCell>
-                                                <StyledTableCell align="left">{row.hashtag}</StyledTableCell>
-                                                <StyledTableCell align="left">
-                                                    {(row.Timelogged = Moment(data.Ventry).format("lll"))}
-                                                </StyledTableCell>
+                                            <StyledTableRow key={row._id}>
+                                                <StyledTableCell align="left">{row.name}</StyledTableCell>
+                                                <StyledTableCell align="left">{row.email}</StyledTableCell>
+                                                <StyledTableCell align="left">{row.phone}</StyledTableCell>
                                                 <StyledTableCell align="center">
                                                     <Grid container>
                                                         <Grid item xs={6}>
@@ -174,10 +202,10 @@ export default function Home(props) {
                                                                 variant="contained"
                                                                 onClick={() => {
                                                                     setEditdata(true)
-                                                                    setIPdata(row.IPAddress)
-                                                                    setPlace(row.class)
-                                                                    setHashtag(row.hashtag)
-                                                                    setSection(row.section)
+                                                                    setID(row._id)
+                                                                    setName(row.name)
+                                                                    setEmail(row.email)
+                                                                    setPhone(row.phone)
                                                                 }}
                                                             >
                                                                 Edit
@@ -214,7 +242,15 @@ export default function Home(props) {
                                 </Table>
 
                             </Paper>
-                            <Button onClick={logout}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                    logout()
+                                    setLoading(true)
+                                }}
+                                style={{ marginTop: "3%" }}
+                            >
                                 Logout
                             </Button>
                         </div>

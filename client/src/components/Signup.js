@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios'
 
 //material-ui imports
-import { Box, Button, Paper, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Paper, TextField, Typography, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 
@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const SignUp = () => {
     const classes = useStyles();
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -40,7 +41,7 @@ export const SignUp = () => {
 
     const onSubmitRegister = (e) => {
         e.preventDefault();
-
+        setLoading(true)
         let data = {
             name: name,
             phone: phone,
@@ -54,6 +55,10 @@ export const SignUp = () => {
                 .post(url, data)
                 .then(response => {
                     console.log(response)
+                    console.log(response.data.token)
+                    setLoading(false)
+                    localStorage.setItem('token', response.data.token)
+                    window.location.href = "/home"
                 })
                 .catch(err => {
                     alert(err)
@@ -63,6 +68,13 @@ export const SignUp = () => {
         }
     }
 
+    if (loading) {
+        return (
+            <div style={{ marginTop: "25%" }}>
+                <CircularProgress />
+            </div>
+        )
+    }
 
 
     return (
@@ -185,9 +197,10 @@ export const SignUp = () => {
                             </form>
                             <Typography style={{ margin: "3%" }}>
                                 <Box>
-                                    Already have an account?{' '}
-                                    <a href='/' id="href">
-                                        Click here
+                                    Don't have an account?{' '}
+                                    Click{' '}
+                                    <a href='/' id="href" style={{ color: "#d97820" }}>
+                                        here
                                     </a>{' '}
                                     to Log-In{' '}
                                 </Box>
