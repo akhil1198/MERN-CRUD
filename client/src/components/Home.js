@@ -81,48 +81,9 @@ export default function Home(props) {
     const [place, setPlace] = useState()
     const [section, setSection] = useState()
     const [hashtag, setHashtag] = useState()
-    // const [editipDetails, setEditipdetails] = useState();
-    // const [showAddIPconfig, setShowaddipconfig] = useState(false);
-
-    // useEffect(() => {
-    //   axios.get("http://localhost:5000/")
-    const [settingsdoc, setSettingsdoc] = useState()
-    // console.log(docID)
-    // console.log(props.ipcam)
-    // setData(props.ipcam)
-    // console.log(props.ipcam)
-    useEffect(() => {
-
-
-    }, [])
-
-    console.log(data)
 
     const emptyRows =
         rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
-
-    // useEffect(() => {
-    //   let data = {
-    //     PointOfCamera: PointOfCamera,
-    //     Hashtag: Hashtag,
-    //   };
-    //   if (deleteData.toString().localeCompare("") !== 0) {
-    //     console.log(deleteData);
-    //     axios
-    //       .post("http://localhost:5000/deleteip", {
-    //         IPAddress: deleteData,
-    //         PointOfCamera: PointOfCamera,
-    //         Hashtag: Hashtag,
-    //       })
-    //       .then((res) => {
-    //         // setData(res.data);
-    //         console.log(res);
-    //       })
-    //       .catch((err) => {
-    //         console.log(err);
-    //       });
-    //   }
-    // }, [deleteData, PointOfCamera, Hashtag]);
 
     if (editData) {
         return <Edituserdetails data={ipData} section={section} place={place} hashtag={hashtag} edit={editData} settings={props.settings} />
@@ -189,16 +150,6 @@ export default function Home(props) {
                                                 </StyledTableCell>
                                                 <StyledTableCell align="center">
                                                     <Grid container>
-                                                        {/* <Grid item xs={6}>
-                          <Button
-                            variant="contained"
-                            onClick={() => {
-                              setEditdata(row.IPAddress, row.PointOfCamera, row.Hashtag);
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </Grid> */}
                                                         <Grid item xs={6}>
                                                             <Button
                                                                 variant="contained"
