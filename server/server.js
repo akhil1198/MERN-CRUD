@@ -33,5 +33,10 @@ app.use("/", (req, res) => {
     res.send("Hello World form NodeJS express.");
 });
 
+const port = process.env.PORT || 8000;
 
-http.listen(5000, () => console.log("Server started on port 5000"));
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static('../client/build'));
+} 
+
+http.listen(port, () => console.log(`Server started on port ${port}`));

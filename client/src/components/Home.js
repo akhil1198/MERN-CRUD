@@ -5,7 +5,6 @@ import { Redirect } from "react-router-dom";
 import Edituserdetails from "./Edituserdetails";
 
 //package imports
-import Moment from "moment";
 import axios from "axios";
 
 //material-ui imports
@@ -25,7 +24,7 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
-import { Typography, Paper, CircularProgress } from "@material-ui/core";
+import { Typography, Paper, CircularProgress, TextField } from "@material-ui/core";
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
@@ -88,6 +87,7 @@ export default function Home(props) {
     const [email, setEmail] = useState()
     const [phone, setPhone] = useState()
     const [loading, setLoading] = useState(false)
+    const [search, setSearch] = useState();
     const token = localStorage.getItem('token')
 
     useEffect(() => {
@@ -101,7 +101,7 @@ export default function Home(props) {
             console.log("not here")
             window.location.href = "/"
         }
-        const url = "http://localhost:5000/api/users/getall"                    //getting all the user information here
+        const url = "http://localhost:8000/api/users/getall"                    //getting all the user information here
 
         axios
             .get(url, {
@@ -117,6 +117,17 @@ export default function Home(props) {
                 console.log(err)
             })
     }, [])
+
+    console.log(search)
+
+    const handleSearch = (search) => {
+        console.log(search)
+        let filteredData = data.filter((result) => {
+            console.log(result.name.indexOf(search) !== -1)
+            return result.name.indexOf(search) !== -1
+        })
+        setData(filteredData)
+    }
 
     const logout = () => {                                                      //logout function
         setLoading(true)
@@ -168,6 +179,7 @@ export default function Home(props) {
                                 <Typography variant="h3" style={{ margin: "2%" }}>
                                     Manage your users here
                                 </Typography>
+                                {/* <TextField type="input" value={search} onChange={() => handleSearch(search)} /> */}
                                 <Table aria-label="simple table" stickyHeader>
                                     <TableHead>
                                         <TableRow>

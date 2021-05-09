@@ -4,10 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "cd .. && cd client && cd src && npm start server.js",
-    "server": "nodemon server.js",
-    "client": "cd .. && cd client && npm start",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "start": "nodemon server.js",
+    "client": "cd.. && cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd .. && cd client && npm run build",
+    "install-client": "cd .. && cd client && npm install",
+    "heroku-postbuild": "npm run install-client && npm run build"
   },
   "author": "Akhil Shridhar",
   "license": "ISC",

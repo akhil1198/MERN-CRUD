@@ -123,7 +123,7 @@ export default function Edituserdetails(props) {
     let data = {
       id: props.id
     };
-    const url = "http://localhost:5000/api/users/remove"
+    const url = "http://localhost:8000/api/users/remove"
     console.log(data);
     try {
       axios
@@ -154,7 +154,7 @@ export default function Edituserdetails(props) {
       phone: phone,
       email: email,
     };
-    const url = "http://localhost:5000/api/users/update"
+    const url = "http://localhost:8000/api/users/update"
     console.log(data);
     try {
       axios

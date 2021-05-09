@@ -48,7 +48,7 @@ export const SignUp = () => {
             email: email,
             password: password
         };
-        const url = "http://localhost:5000/api/users/register"
+        const url = "http://localhost:8000/api/users/register"
         console.log(data);
         try {
             axios
