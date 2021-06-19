@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "client": "cd.. && cd client && npm start",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "client": "cd .. && cd client && npm start",
+    "dev": "concurrently \"npm run start\" \"npm run client\"",
     "build": "cd .. && cd client && npm run build",
     "install-client": "cd .. && cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build"
